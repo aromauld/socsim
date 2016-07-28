@@ -8,33 +8,21 @@ import java.util.List;
 
 import simulation.SimManager;
 
-public interface MenuInterface {
-	List<Component> base_comp = new ArrayList<Component>();
-	List<Component> add_comp = new ArrayList<Component>();
+
+public class Projects  implements MenuInterface{
 	
-	public List<Component> GetCurrentUI();
-	public void action_evt(ActionEvent e);
-	public void item_evt(ItemEvent e);
-}
-
-
-
-
-//General Copy-Paste layout for a new sub-menu
-/*
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.util.ArrayList;
-import java.util.List;
-import simulation.SimManager;
-
- implements MenuInterface
-
 	private void SetBaseComp() //Sets up the base components
 	{
-		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
+		base_comp.add(Coex.btn("Management", 5, 50, 200, 20, null));
+		base_comp.add(Coex.btn("Create New Project", 550, 100, 200, 30, "project_create"));
+		
+		base_comp.add(Coex.lbl("Projects", 210, 80, 80, 20));
+		base_comp.add(Coex.lbl("Status", 380, 80, 200, 20));
+	}
+	
+	public Projects()
+	{
+		SetBaseComp();
 	}
 
 
@@ -43,8 +31,8 @@ import simulation.SimManager;
 		String action = e.getActionCommand();
 		switch (action)
 		{
-			case "Dashboard":
-				SimManager.newMenu = new Dashboard();
+			case "Management":
+				SimManager.newMenu = new Management();
 				break;
 			default:
 				break;
@@ -72,4 +60,4 @@ import simulation.SimManager;
 		list.addAll(add_comp);
 		return list;
 	}
-*/
+}

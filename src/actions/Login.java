@@ -20,7 +20,7 @@ public class Login implements MenuInterface{
 	private Label ErrorMsg;
 	
 	
-	private void SetBaseComp()
+	private void SetBaseComp()//Sets up the base components
 	{
 		username = Coex.txtF("username" ,5,30,200,20);
 		password = Coex.txtF("password" ,5,55,200,20);
@@ -30,9 +30,6 @@ public class Login implements MenuInterface{
 		base_comp.add(Coex.btn("Login", 5,80,200,20, "login"));
 		base_comp.add(ErrorMsg);
 	}
-	private void SetAddComp()
-	{
-	}
 	
 	public Login()
 	{
@@ -41,7 +38,7 @@ public class Login implements MenuInterface{
 	
 	
 	
-	//Looks up the username and password in the database and returns the matching ID
+	//Looks up the username and password in the database and returns the matching player
 	private Player SignIn(String username, String password)
 	{
 		if(username.equals("username")  &&  password.equals("password"))
@@ -51,10 +48,9 @@ public class Login implements MenuInterface{
 	}
 	
 	
-	
-	
-	
-	
+		
+
+	//Handle Button Presses
 	public void action_evt(ActionEvent e) {
 		String action = e.getActionCommand();
 		if(action == "login")
@@ -67,7 +63,7 @@ public class Login implements MenuInterface{
 			}
 		}
 	}
-	
+	//Handle Item Events
 	public void item_evt(ItemEvent e)
 	{
 		

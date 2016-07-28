@@ -18,7 +18,6 @@ public class Transactions implements MenuInterface{
 	TextField a;
 	private String selectedAccount = "personal";
 	
-	Calendar cal;
 	Choice cal_day;
 	Choice cal_month;
 	Choice cal_year;
@@ -26,11 +25,9 @@ public class Transactions implements MenuInterface{
 	public Transactions()
 	{
 		SetBaseComp();
-		cal = Calendar.getInstance();
-		//System.out.println(cal.);
 	}
 	
-	private void SetBaseComp()
+	private void SetBaseComp() //Sets up the base components
 	{
 		//base_comp.add(Coex.lbl("Transactions", 100,100,100,100));
 		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
@@ -62,8 +59,8 @@ public class Transactions implements MenuInterface{
 		
 	}
 	
-	//Update the project list with the current list of projects from the DB
-	private void UpdateProjectList()
+	
+	private void UpdateProjectList() //Update the project list with the current list of projects from the DB
 	{
 		ProjectList.removeAll();
 		ProjectList.add("Project 1");
@@ -71,12 +68,12 @@ public class Transactions implements MenuInterface{
 		ProjectList.add("Project 3");
 		ProjectList.setBounds(210, 90, 80, 20);
 	}
-	private void SubmitTransaction()
+	private void SubmitTransaction() //Handles submitted Transaction
 	{
 		Error.setText("");
-		if(ParseAmmount() <= 0)
+		if(ParseAmmount(((TextField)base_comp.get(2)).getText()) <= 0)
 			Error.setText("Invalid Ammount");
-		if(selectedAccount == "personal" && (SimManager.player.GetMoney()) < ParseAmmount())
+		if(selectedAccount == "personal" && (SimManager.player.GetMoney()) < ParseAmmount(((TextField)base_comp.get(2)).getText()))
 			Error.setText("Insufficient Funds");
 		if(selectedAccount == "company")
 		{
@@ -87,16 +84,8 @@ public class Transactions implements MenuInterface{
 			//Complete Transaction
 			Error.setText("Transaction Sent");
 		}
-	}
-	private int ParseAmmount()
-	{
-		int amnt = 0;
-		try{
-			amnt = Integer.parseInt(((TextField)base_comp.get(2)).getText());
-		} catch(Exception e){}
-		return amnt;
-	}
-	private void UpdateDaysInMonth()
+	}	
+	private void UpdateDaysInMonth()//Updates the calendar
 	{
 		int selected = 1;
 		if(cal_day != null)
@@ -137,6 +126,11 @@ public class Transactions implements MenuInterface{
 		
 		add_comp.add(cal_day);
 	}
+	
+	
+	
+	
+	//Handle Button Presses
 	public void action_evt(ActionEvent e) {
 		String action = e.getActionCommand();
 		switch (action)
@@ -149,6 +143,7 @@ public class Transactions implements MenuInterface{
 				break;
 		}
 	}
+	//Handle Item Events
 	public void item_evt(ItemEvent e) {
 		String item = e.getItem().toString();
 		
@@ -191,6 +186,17 @@ public class Transactions implements MenuInterface{
 	}
 	
 	
+	
+	
+	private int ParseAmmount(String s)//Returns the string as an int
+	{
+		int amnt = 0;
+		try{
+			amnt = Integer.parseInt(s);
+		} catch(Exception e){}
+		return amnt;
+	}
+	//Return the current components
 	private List<Component> base_comp = new ArrayList<Component>();
 	private List<Component> add_comp = new ArrayList<Component>();
 	public List<Component> GetCurrentUI() {

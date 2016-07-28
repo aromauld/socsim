@@ -19,21 +19,25 @@ import java.awt.event.ItemListener;
 
 public class SimManager implements ActionListener, ItemListener {
 	
+	//App, Menu, App Components
 	public static MenuInterface newMenu;
 	public static boolean _UpdateUI = false;
 	Applet app;
 	private MenuInterface cur_menu;
 	private List<Component> app_comp = new ArrayList<Component>();
-
-	public static Player player;
-	public static Calendar cal;
 	
+	//Database
 	String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	String DB_URL = "db.college.brown.edu";
 	String USER = "socsim";
 	String PASS = "$0cs!mUs3r";
 	Connection conn = null;
 	Statement stmt = null;
+	
+	//Simulation Components
+	public static Player player;
+	public static Calendar cal;
+	public static List<Skill> skill_list = new ArrayList<Skill>();
 	
 	
 	
@@ -45,6 +49,7 @@ public class SimManager implements ActionListener, ItemListener {
 		UpdateMenu(new Login());
 		newMenu = cur_menu;
 		
+		FetchSkillList();
 		/*
 		
 		try{
@@ -75,8 +80,14 @@ public class SimManager implements ActionListener, ItemListener {
 	}
 	
 	
+	private void FetchSkillList()
+	{
+		skill_list.add(new Skill("skill_1", .5f));
+		skill_list.add(new Skill("skill_2", .85f));
+	}
+	
 
-
+	//Handle Item Events
 	public void itemStateChanged(ItemEvent e) {
 		cur_menu.item_evt(e);
 		if(_UpdateUI)
@@ -84,17 +95,18 @@ public class SimManager implements ActionListener, ItemListener {
 		
 	}
 
-
+	//Handle Button presses
 	public void actionPerformed(ActionEvent e) {
 		cur_menu.action_evt(e);
 		if(newMenu != cur_menu)
 			UpdateMenu(newMenu);
-
+		if(_UpdateUI)
+			UpdateUI();
 	}
 	
 	
 	
-	
+	//Updates the components being displayed
 	private void UpdateUI()
 	{
 		if(app_comp != null)
@@ -104,6 +116,8 @@ public class SimManager implements ActionListener, ItemListener {
 					((Button)c).removeActionListener(this);	
 				if(c.getClass().equals(Choice.class))
 					((Choice)c).removeItemListener(this);
+				if(c.getClass().equals(java.awt.List.class))
+					((java.awt.List)c).removeItemListener(this);
 			}
 		app.removeAll();
 		app_comp = cur_menu.GetCurrentUI();
@@ -115,6 +129,8 @@ public class SimManager implements ActionListener, ItemListener {
 				((Button)c).addActionListener(this);	
 			if(c.getClass().equals(Choice.class))
 				((Choice)c).addItemListener(this);
+			if(c.getClass().equals(java.awt.List.class))
+				((java.awt.List)c).addItemListener(this);
 		}
 		_UpdateUI = false;
 	}
@@ -125,24 +141,6 @@ public class SimManager implements ActionListener, ItemListener {
 	private void UpdateMenu(MenuInterface menu)
 	{
 		cur_menu = menu;
-		if(app_comp != null)
-			for (Component c : app_comp)
-			{
-				if(c.getClass().equals(Button.class))
-					((Button)c).removeActionListener(this);	
-				if(c.getClass().equals(Choice.class))
-					((Choice)c).removeItemListener(this);
-			}
-		app.removeAll();
-		app_comp = cur_menu.GetCurrentUI();
-		if(app_comp != null)
-		for (Component c : app_comp)
-		{
-			app.add(c);
-			if(c.getClass().equals(Button.class))
-				((Button)c).addActionListener(this);	
-			if(c.getClass().equals(Choice.class))
-				((Choice)c).addItemListener(this);
-		}
+		UpdateUI();
 	}
 }
