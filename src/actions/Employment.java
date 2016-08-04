@@ -5,10 +5,14 @@ import java.awt.Component;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import components.Company;
+import components.Player;
+import simulation.Database;
 import simulation.SimManager;
 
 public class Employment implements MenuInterface {
@@ -119,8 +123,18 @@ public class Employment implements MenuInterface {
 	
 	private void GetJobOffers() //Fetch job offers from database
 	{
-		job_offers.add(new Company("Company 1"));
-		job_offers.add(new Company("Company 2"));
+		try {
+			ResultSet rs = Database.Query("select org_id from job_offers WHERE player_id = '" + SimManager.player.GetID() +  "';");
+			if(rs != null)
+			while ( rs.next() ) {
+				job_offers.add(new Company((int)rs.getObject("org_id")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		//job_offers.add(new Company("Company 1"));
+		//job_offers.add(new Company("Company 2"));
 		
 		jobOffers = new java.awt.List(job_offers.size());
 		jobOffers.setBounds(800, 150, 160, 200);
@@ -147,8 +161,10 @@ public class Employment implements MenuInterface {
 					UpdateEmploymentStatus();
 					
 					//Remove the job update from the database and update job Offers 'GetJobOffers()'
-					jobOffers.remove(selectedOffer);
-					job_offers.remove(selectedOffer);
+					//jobOffers.remove(selectedOffer);
+					//job_offers.remove(selectedOffer);
+					Database.Update("DELETE FROM job_offers WHERE player_id = '" + SimManager.player.GetID() + "' AND org_id = '" + job_offers.get(selectedOffer).GetID() + "';");
+					GetJobOffers();
 					acceptJob.setEnabled(false);
 				}
 				

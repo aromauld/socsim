@@ -19,6 +19,7 @@ public class Main extends Applet{
 	public void init()
 	{
 		setSize(WIDTH, HEIGHT);
+		setLayout(null);
 	}
 	
 	public void paint(Graphics g)

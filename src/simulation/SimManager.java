@@ -1,6 +1,11 @@
 package simulation;
 
 import java.sql.*;
+
+import java.sql.Connection;
+
+import com.mysql.jdbc.*;
+
 import actions.*;
 import actions.MenuInterface;
 import components.*;
@@ -27,12 +32,12 @@ public class SimManager implements ActionListener, ItemListener {
 	private List<Component> app_comp = new ArrayList<Component>();
 	
 	//Database
+	Database db;
 	String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	String DB_URL = "db.college.brown.edu";
-	String USER = "socsim";
-	String PASS = "$0cs!mUs3r";
+	String DB_URL = "jdbc:mysql://localhost:3306/socsim"; //    jdbc:mysql://localhost/     jdbc:mysql://db.college.brown.edu/
+	String USER = "root";//  root    socsim
+	String PASS = "sqldbmpass86";//    sqldbmpass86   $0cs!mUs3r 
 	Connection conn = null;
-	Statement stmt = null;
 	
 	//Simulation Components
 	public static Player player;
@@ -45,27 +50,24 @@ public class SimManager implements ActionListener, ItemListener {
 	{
 		Coex.font = new Font("Tahoma", Font.PLAIN, 12);
 		this.app = app;
+		db = new Database();
+		db.Connect(DB_URL, USER, PASS);
+		
+		/*
+		db.Connect(
+				"jdbc:mysql://db.college.brown.edu:3306/socsim",
+				"socsim", 
+				"$0cs!mUs3r");
+		*/
 		
 		UpdateMenu(new Login());
 		newMenu = cur_menu;
 		
 		FetchSkillList();
-		/*
 		
-		try{
-			Class.forName("com.mysql.jdbc.Driver");
-			System.out.println("Connecting to database...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
-			
-			conn.close();
-		}catch(SQLException se)
-		{
-			se.printStackTrace();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		*/
+		
+		
+		
 	}
 	
 	

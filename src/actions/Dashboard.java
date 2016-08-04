@@ -6,7 +6,7 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import simulation.Database;
 import simulation.SimManager;
 
 public class Dashboard implements MenuInterface{
@@ -27,16 +27,20 @@ public class Dashboard implements MenuInterface{
 			base_comp.add(Coex.btn(gerneral[i], 5,150 + (20 * i),200,20, null));
 		
 		//(Role Specific)
-		String[] specific = new String[1];//{"Management"};
+		//String[] specific = new String[1];//{"Management"};
+		List<String> specific = new ArrayList<String>();
 			//Manager
-			if(role == "manager")
-				specific[0] = "Management";
-			if(role == "technologist")
-				specific[0] = "Employment";
+			if(role.equals("manager"))
+			{
+				specific.add("Management");
+				specific.add("Job Offers");
+			}
+			if(role.equals("technologist"))
+				specific.add("Employment");
 			
 		if(specific != null)
-		for(int i = 0; i < specific.length; i++)
-			base_comp.add(Coex.btn(specific[i], 5,300 + (20 * i),200,20, null));
+		for(int i = 0; i < specific.size(); i++)
+			base_comp.add(Coex.btn(specific.get(i), 5,300 + (20 * i),200,20, null));
 
 	}
 	public Dashboard()
@@ -60,7 +64,13 @@ public class Dashboard implements MenuInterface{
 				SimManager.newMenu = new Transactions();
 				break;
 			case "Management":
-				SimManager.newMenu = new Management();
+				if(!Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND id_player = " + SimManager.player.GetID()))
+					SimManager.newMenu = new CreateCompany();//Management();
+				if(Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND position = 'ceo' AND id_player = " + SimManager.player.GetID()))
+					SimManager.newMenu = new CEO();//Management();
+				break;
+			case "Job Offers":
+				SimManager.newMenu = new JobOffers();
 				break;
 			case "Employment":
 				SimManager.newMenu = new Employment();

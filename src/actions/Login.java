@@ -3,11 +3,14 @@ package actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import components.Player;
+import simulation.Database;
 import simulation.SimManager;
 
 
@@ -41,8 +44,15 @@ public class Login implements MenuInterface{
 	//Looks up the username and password in the database and returns the matching player
 	private Player SignIn(String username, String password)
 	{
-		if(username.equals("username")  &&  password.equals("password"))
-			return new Player(0);
+		ResultSet rs = Database.Query("select id from profile WHERE username = '" + username + "' and password = '" + password + "';");
+		try {
+			if(rs.next())
+				return new Player(rs.getInt("id"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//if(username.equals("username")  &&  password.equals("password"))
+		//	return new Player(0);
 		ErrorMsg.setText("Error Msg");
 		return null;
 	}
