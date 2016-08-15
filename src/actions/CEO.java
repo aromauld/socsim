@@ -36,8 +36,19 @@ public class CEO implements MenuInterface{
 	
 	private void SetBaseComp() //Sets up the base components
 	{
-		org = SimManager.player.GetOrg();
-		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
+		base_comp.clear();
+		base_comp = Dashboard.GetOverlay(base_comp);
+		
+		//Get company
+		ResultSet rs_org = Database.Query("SELECT id_company FROM employment WHERE id_player = " + SimManager.player.GetID() + " and offer = 'accepted'");
+		try {
+			if(rs_org.next())
+				org = new Company(rs_org.getInt("id_company"));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		
 		
 		//Company Name and ID
 		base_comp.add(Coex.lbl(org.GetName() + " (" + org.GetID() + ")" , 210,100 ,200,20)); 
@@ -62,6 +73,7 @@ public class CEO implements MenuInterface{
 		
 		
 		//Managers for hire
+		base_comp.add(Coex.lbl("Available Managers" , 450,100 ,200,20)); 
 		managers_for_hire = new java.awt.List();
 		managers_for_hire.setBounds(450, 130, 200, 320);
 		base_comp.add(managers_for_hire);
@@ -78,6 +90,8 @@ public class CEO implements MenuInterface{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		base_comp.add(Coex.lbl("Offer Job As" , 660,100 ,200,20)); 
 		offer_cfo = Coex.btn("CFO", 660, 130, 200, 20, "offer_cfo"); offer_cfo.setEnabled(false); base_comp.add(offer_cfo);
 		offer_cto = Coex.btn("CTO", 660, 150, 200, 20, "offer_cto"); offer_cto.setEnabled(false); base_comp.add(offer_cto);
 		offer_manager = Coex.btn("Manager", 660, 170, 200, 20, "offer_manager"); offer_manager.setEnabled(false); base_comp.add(offer_manager);
@@ -88,7 +102,6 @@ public class CEO implements MenuInterface{
 		return Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND position = 'ceo' AND id_player = " + SimManager.player.GetID() + " AND id_company = " + org.GetID());
 	}
 	
-
 	public void action_evt(ActionEvent e) //Handle Button Presses
 	{
 		String action = e.getActionCommand();
@@ -96,8 +109,15 @@ public class CEO implements MenuInterface{
 		switch (action)
 		{
 			
-			case "Dashboard":
+			case "dashboard_return":
 				SimManager.newMenu = new Dashboard();
+				break;
+			case "dashboard_refresh":
+				Refresh();
+				break;
+			case "dashboard_signout":
+				SimManager.player = null;
+				SimManager.newMenu = new Login();
 				break;
 				
 			case "fire_manager":
@@ -160,7 +180,11 @@ public class CEO implements MenuInterface{
 	}
 	
 	
-	
+	private void Refresh()
+	{
+		SetBaseComp();
+		SimManager._UpdateUI =  true;
+	}
 	//Return the current components
 	private List<Component> base_comp = new ArrayList<Component>();
 	private List<Component> add_comp = new ArrayList<Component>();

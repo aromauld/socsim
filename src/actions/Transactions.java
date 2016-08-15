@@ -36,14 +36,16 @@ public class Transactions implements MenuInterface{
 	private void SetBaseComp() //Sets up the base components
 	{
 		//base_comp.add(Coex.lbl("Transactions", 100,100,100,100));
-		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
+		base_comp.clear();
+		base_comp = Dashboard.GetOverlay(base_comp);
+		
 		base_comp = Coex.LabeledTextField(base_comp, "Amount: $", 420, 70, 100);
 		
 		String role = SimManager.player.GetRole();
 		
 		List<String> transactionType = new ArrayList();  transactionType.add("Normal");
-		if(role == "investor"  ||  role == "government")	transactionType.add("Loan");
-		if(role == "government")	transactionType.add("Grant");
+		if(role.equals("investor")  ||  role.equals("government"))	transactionType.add("Loan");
+		if(role.equals("government"))	transactionType.add("Grant");
 		
 		base_comp = Coex.LabeledDropDown(base_comp, "Transaction Type: ", 210, 70, transactionType);
 		
@@ -84,8 +86,8 @@ public class Transactions implements MenuInterface{
 			Error.setText("Invalid Ammount");
 		if(selectedAccount == "personal" && (SimManager.player.GetMoney()) < Amount)
 			Error.setText("Insufficient Funds");
-		if(selectedAccount == "company"  &&  SimManager.player.GetOrg().GetMoney() < Amount)
-			Error.setText("Insufficient Funds");
+		//if(selectedAccount == "company"  &&  SimManager.player.GetOrg().GetMoney() < Amount)
+		//	Error.setText("Insufficient Funds");
 		
 		
 		if(Error.getText().equals(""))
@@ -98,8 +100,8 @@ public class Transactions implements MenuInterface{
 					c.Pay(Amount);
 					if(selectedAccount == "personal")
 						SimManager.player.Pay(-Amount);
-					if(selectedAccount == "company")
-						SimManager.player.GetOrg().Pay(-Amount);
+					//if(selectedAccount == "company")
+					//	SimManager.player.GetOrg().Pay(-Amount);
 					System.out.println("Company Recieved");
 				}
 				else
@@ -111,8 +113,8 @@ public class Transactions implements MenuInterface{
 						p.Pay(Amount);
 						if(selectedAccount == "personal")
 							SimManager.player.Pay(-Amount);
-						if(selectedAccount == "company")
-							SimManager.player.GetOrg().Pay(-Amount);
+						//if(selectedAccount == "company")
+						//	SimManager.player.GetOrg().Pay(-Amount);
 						System.out.println("Player Recieved");
 					}
 				}
@@ -188,9 +190,17 @@ public class Transactions implements MenuInterface{
 		String action = e.getActionCommand();
 		switch (action)
 		{
-			case "Dashboard":
+			case "dashboard_return":
 				SimManager.newMenu = new Dashboard();
 				break;
+			case "dashboard_refresh":
+				Refresh();
+				break;
+			case "dashboard_signout":
+				SimManager.player = null;
+				SimManager.newMenu = new Login();
+				break;
+				
 			case "transaction_submit":
 				SubmitTransaction();
 				break;
@@ -248,6 +258,12 @@ public class Transactions implements MenuInterface{
 			amnt = Integer.parseInt(s);
 		} catch(Exception e){}
 		return amnt;
+	}
+	
+	private void Refresh()
+	{
+		SetBaseComp();
+		SimManager._UpdateUI =  true;
 	}
 	//Return the current components
 	private List<Component> base_comp = new ArrayList<Component>();

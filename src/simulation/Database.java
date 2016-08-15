@@ -122,7 +122,12 @@ public class Database {
 		Update(u);
 	}
 	
-	
+	public static void CreateProject(String name, int orgID)
+	{
+		String u = String.format("INSERT INTO project VALUES( %2d, '%s', %2d, 'patent pending', 0, 0, 0, 0, 0, 0, 0, 0, 0);", 
+				GetMaxID("project"), name, orgID);
+		Update(u);
+	}
 	
 	public static void SendJobOffer(int playerID, int orgID, String position)
 	{
@@ -155,23 +160,19 @@ public class Database {
 			return null;
 		}
 	}
-	/*
-		java.sql.Statement stmt  = con.createStatement();
-		//String query = "select id from profile ;";
-		String query = "select name, password from profile WHERE name = 'Mark Suchman' and password = 'admin';";
-		ResultSet rs = stmt.executeQuery(query);
-		//System.out.println(rs.getObject(2));//.getString(0));
-		
-		
-		while ( rs.next() ) {
-	        int numColumns = rs.getMetaData().getColumnCount();
-	        for ( int i = 1 ; i <= numColumns ; i++ ) {
-	           // Column numbers start at 1.
-	           // Also there are many methods on the result set to return
-	           //  the column as a particular type. Refer to the Sun documentation
-	           //  for the list of valid conversions.
-	           System.out.println( "COLUMN " + i + " = " + rs.getObject(i) );
-	        }
-	    }
-    */
+	
+/*
+   while ( rs.next() ) {
+					
+    int numColumns = rs.getMetaData().getColumnCount();
+    for ( int i = 1 ; i <= numColumns ; i++ ) {
+       // Column numbers start at 1.
+       // Also there are many methods on the result set to return
+       //  the column as a particular type. Refer to the Sun documentation
+       //  for the list of valid conversions.
+       System.out.println( "COLUMN " + i + " = " + rs.getObject(i) );
+       
+    }
+}
+*/
 }

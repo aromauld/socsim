@@ -22,6 +22,15 @@ public class Skill {
 		name = "temp name";
 		learnRate = 1f;
 	}
+	public float GetPlayerSkill(int ID)
+	{
+		return 1f;
+	}
+	
+	public void SetLearnRate(float learnRate)
+	{
+		this.learnRate = learnRate;
+	}
 	
 	
 	public String GetName()

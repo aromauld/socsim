@@ -20,14 +20,11 @@ public class Main extends Applet{
 	{
 		setSize(WIDTH, HEIGHT);
 		setLayout(null);
+		sim = new SimManager(this);	  
 	}
 	
 	public void paint(Graphics g)
-	{
-		//This is here in order to delay initialization and solve UI bug
-		if(sim == null)
-			sim = new SimManager(this);	  
-		
+	{		
 		//sim.Draw(g);
 
 	}

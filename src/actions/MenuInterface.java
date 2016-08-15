@@ -34,17 +34,27 @@ import simulation.SimManager;
 
 	private void SetBaseComp() //Sets up the base components
 	{
-		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
+		base_comp.clear();
+		base_comp = Dashboard.GetOverlay(base_comp);
 	}
 
 
+	
+	
 	public void action_evt(ActionEvent e) //Handle Button Presses
 	{
 		String action = e.getActionCommand();
 		switch (action)
 		{
-			case "Dashboard":
+			case "dashboard_return":
 				SimManager.newMenu = new Dashboard();
+				break;
+			case "dashboard_refresh":
+				Refresh();
+				break;
+			case "dashboard_signout":
+				SimManager.player = null;
+				SimManager.newMenu = new Login();
 				break;
 			default:
 				break;
@@ -63,7 +73,12 @@ import simulation.SimManager;
 	}
 	
 	
-	
+	//Refresh the current page
+	private void Refresh()
+	{
+		SetBaseComp();
+		SimManager._UpdateUI =  true;
+	}
 	//Return the current components
 	private List<Component> base_comp = new ArrayList<Component>();
 	private List<Component> add_comp = new ArrayList<Component>();

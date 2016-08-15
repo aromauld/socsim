@@ -138,7 +138,6 @@ public class SimManager implements ActionListener, ItemListener {
 	}
 	
 	
-	
 	//Switch to the new menu and update the UI
 	private void UpdateMenu(MenuInterface menu)
 	{

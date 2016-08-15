@@ -1,6 +1,8 @@
 package actions;
 
+import java.awt.Button;
 import java.awt.Component;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.sql.ResultSet;
@@ -11,28 +13,48 @@ import java.util.List;
 import components.Company;
 import simulation.Database;
 import simulation.SimManager;
-import java.awt.*;
 
-public class CreateCompany implements MenuInterface{
+public class CreateProject  implements MenuInterface {
+
+	private Company org;
+	Button submit;
 	
-	public CreateCompany()
+	//Project Info
+	TextField name;
+	
+	public CreateProject()
 	{
 		SetBaseComp();
 	}
-	
-	TextField companyName;
 	
 	private void SetBaseComp() //Sets up the base components
 	{
 		base_comp.clear();
 		base_comp = Dashboard.GetOverlay(base_comp);
 		
-		companyName = Coex.txtF("", 210, 70, 200, 20);
-		base_comp.add(companyName);
-		base_comp.add(Coex.btn("Create Company", 210, 90, 200, 20, "company_create"));
+		//Get company
+		ResultSet rs_org = Database.Query("SELECT id_company FROM employment WHERE id_player = " + SimManager.player.GetID() + " and offer = 'accepted'");
+		try {
+			if(rs_org.next())
+				org = new Company(rs_org.getInt("id_company"));
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		submit = Coex.btn("Submit For Approval", 250, 450, 250, 25, "submit");
+		base_comp.add(submit);
+		
+		name = Coex.txtF("", 130, 35, 200, 25);
+		base_comp.add(name);
+	}
+	
+	private boolean isCTO() //Returns true if the current player is still CTO
+	{
+		return Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND position = 'cto' AND id_player = " + SimManager.player.GetID() + " AND id_company = " + org.GetID());
 	}
 
-
+	
+	
 	public void action_evt(ActionEvent e) //Handle Button Presses
 	{
 		String action = e.getActionCommand();
@@ -49,16 +71,9 @@ public class CreateCompany implements MenuInterface{
 				SimManager.newMenu = new Login();
 				break;
 				
-				
-			case "company_create":
-				if(!Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND id_player = "  + SimManager.player.GetID()))
-				{
-						Company org = new Company(companyName.getText());
-						Database.Employ(SimManager.player.GetID(), org.GetID(), "CEO", "accepted");
-						SimManager.newMenu = new CEO();
-				}
+			case "submit":
+				Database.CreateProject(name.getText(), org.GetID());
 				break;
-				
 				
 			default:
 				break;
@@ -77,6 +92,7 @@ public class CreateCompany implements MenuInterface{
 	}
 	
 	
+	//Refresh the current page
 	private void Refresh()
 	{
 		SetBaseComp();

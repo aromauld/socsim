@@ -26,7 +26,8 @@ public class JobOffers implements MenuInterface {
 	
 	private void SetBaseComp() //Sets up the base components
 	{
-		base_comp.add(Coex.btn("Dashboard", 5, 50, 200, 20, null));
+		base_comp.clear();
+		base_comp = Dashboard.GetOverlay(base_comp);
 		
 		offers = new java.awt.List();
 		offers.setBounds(210,100,400,300);
@@ -53,13 +54,21 @@ public class JobOffers implements MenuInterface {
 		String action = e.getActionCommand();
 		switch (action)
 		{
-			case "Dashboard":
+			case "dashboard_return":
 				SimManager.newMenu = new Dashboard();
+				break;
+			case "dashboard_refresh":
+				Refresh();
+				break;
+			case "dashboard_signout":
+				SimManager.player = null;
+				SimManager.newMenu = new Login();
 				break;
 				
 			case "accept_offer":
+				if(SimManager.player.GetRole().equals("manager"))
+					Database.Update("DELETE FROM employment WHERE id = " + SimManager.player.GetID() + " AND offer = 'accepted'");
 				Database.Update("UPDATE employment SET offer = 'accepted' where id = " + offers_id.get(offers.getSelectedIndex()) + ";");
-				//Delete previous employment data if manager!
 				break;
 				
 			case "decline_offer":
@@ -94,7 +103,11 @@ public class JobOffers implements MenuInterface {
 	}
 	
 	
-	
+	private void Refresh()
+	{
+		SetBaseComp();
+		SimManager._UpdateUI =  true;
+	}
 	//Return the current components
 	private List<Component> base_comp = new ArrayList<Component>();
 	private List<Component> add_comp = new ArrayList<Component>();

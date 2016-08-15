@@ -1,8 +1,12 @@
 package actions;
 
 import java.awt.Component;
+import java.awt.Label;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +16,14 @@ import simulation.SimManager;
 public class Dashboard implements MenuInterface{
 
 	String role;
+	
+	public static List<Component> GetOverlay(List<Component> list)
+	{
+		list.add(Coex.btn("R", 880, 20, 20, 20, "dashboard_refresh"));	
+		list.add(Coex.btn("D", 910, 20, 20, 20, "dashboard_return"));		
+		list.add(Coex.btn("S", 940, 20, 20, 20, "dashboard_signout"));
+		return list;
+	}
 	
 	private void SetBaseComp() //Sets up the base components
 	{
@@ -33,10 +45,22 @@ public class Dashboard implements MenuInterface{
 			if(role.equals("manager"))
 			{
 				specific.add("Management");
+				if(Database.hasNext("SELECT id FROM employment WHERE id_player = "+SimManager.player.GetID()+" AND position = 'CTO' AND offer = 'accepted'"))
+				{
+					specific.add("Project Bin");
+					specific.add("Manage Workers");
+				}
 				specific.add("Job Offers");
 			}
 			if(role.equals("technologist"))
+			{
 				specific.add("Employment");
+				specific.add("Job Offers");
+			}
+			if(role.equals("government"))
+			{
+				specific.add("Patent Office");
+			}
 			
 		if(specific != null)
 		for(int i = 0; i < specific.size(); i++)
@@ -67,13 +91,28 @@ public class Dashboard implements MenuInterface{
 				if(!Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND id_player = " + SimManager.player.GetID()))
 					SimManager.newMenu = new CreateCompany();//Management();
 				if(Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND position = 'ceo' AND id_player = " + SimManager.player.GetID()))
-					SimManager.newMenu = new CEO();//Management();
+					SimManager.newMenu = new CEO();
+				if(Database.hasNext("SELECT id FROM employment WHERE offer = 'accepted' AND position = 'cto' AND id_player = " + SimManager.player.GetID()))
+					SimManager.newMenu = new CTO();
+				break;
+			case "Project Bin":
+				if(Database.hasNext("SELECT id FROM employment WHERE id_player = "+SimManager.player.GetID()+" AND position = 'CTO' AND offer = 'accepted'"))
+					SimManager.newMenu = new ProjectBin();
+				break;
+			case "Manage Workers":
+				if(Database.hasNext("SELECT id FROM employment WHERE id_player = "+SimManager.player.GetID()+" AND position = 'CTO' AND offer = 'accepted'"))
+					SimManager.newMenu = new ManageWorkers();
 				break;
 			case "Job Offers":
 				SimManager.newMenu = new JobOffers();
 				break;
 			case "Employment":
-				SimManager.newMenu = new Employment();
+				SimManager.newMenu = new TechEmployment();
+				//SimManager.newMenu = new Employment();
+				break;
+			case "Patent Office":
+				if(Database.hasNext("SELECT id FROM profile WHERE id = "+SimManager.player.GetID()+" AND role = 'government'"))
+					SimManager.newMenu = new PatentOffice();
 				break;
 		}
 
